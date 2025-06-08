@@ -1,0 +1,52 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Inmbo TV</title>
+</head>
+<body>
+  <h1>Inmbo TV - البث المباشر</h1>
+  <video id="videoPlayer" width="640" height="360" controls autoplay></video>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDTNaybyMBTFWmG7dXUcTJBPzYcm84iCeg",
+      authDomain: "enmbo-tv.firebaseapp.com",
+      projectId: "enmbo-tv",
+      storageBucket: "enmbo-tv.firebasestorage.app",
+      messagingSenderId: "83445547702",
+      appId: "1:83445547702:web:2891f40b90f25b0b5a5c17",
+      measurementId: "G-FRKV36LVJJ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const videoPlayer = document.getElementById("videoPlayer");
+
+    async function loadVideos() {
+      const querySnapshot = await getDocs(collection(db, "videos"));
+      const urls = [];
+      querySnapshot.forEach((doc) => {
+        urls.push(doc.data().url);
+      });
+
+      let index = 0;
+      videoPlayer.src = urls[index];
+      videoPlayer.onended = () => {
+        index++;
+        if (index < urls.length) {
+          videoPlayer.src = urls[index];
+          videoPlayer.play();
+        }
+      };
+    }
+
+    loadVideos();
+  </script>
+</body>
+</html>
